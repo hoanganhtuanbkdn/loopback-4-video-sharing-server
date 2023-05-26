@@ -1,0 +1,5 @@
+email: admin@silkstore.com
+firstName: Admin
+lastName: Supper
+password: admin@123
+roles: ['admin']

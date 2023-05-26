@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: silk-store-db
+    image: postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - '5438:5432'
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  server:
+    restart: always
+    container_name: silk-store-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: 0.0.0.0
+    env_file:
+      - .env
+    environment:
+      PROJECT_EVN_TYPE: ${PROJECT_EVN_TYPE}
+      PG_NAME: ${PG_NAME}
+      PG_CONNECTOR: ${PG_CONNECTOR}
+      PG_HOST: ${PG_HOST}
+      PG_PORT: ${PG_PORT}
+      PG_USER: ${PG_USER}
+      PG_PASS: ${PG_PASS}
+      PG_DB: ${PG_DB}
+      TOKEN_SECRET_VALUE: ${TOKEN_SECRET_VALUE}
+      TOKEN_EXPIRES_IN_VALUE: ${TOKEN_EXPIRES_IN_VALUE}
+
+    ports:
+      - 4005:3000
+    links:
+      - postgres
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
