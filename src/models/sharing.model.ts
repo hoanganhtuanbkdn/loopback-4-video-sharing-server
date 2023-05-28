@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {User} from './user.model';
 
 @model()
 export class Sharing extends Entity {
@@ -17,6 +18,11 @@ export class Sharing extends Entity {
 
   @property({
     type: 'string',
+  })
+  cover: string;
+
+  @property({
+    type: 'string',
     required: true,
   })
   title: string;
@@ -26,18 +32,13 @@ export class Sharing extends Entity {
     required: true,
   })
   description: string;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  userId: number;
-
   @property({
     type: 'date',
   })
   createdAt?: string;
 
+  @belongsTo(() => User)
+  userId: number;
 
   constructor(data?: Partial<Sharing>) {
     super(data);

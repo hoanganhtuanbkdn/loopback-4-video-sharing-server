@@ -90,7 +90,7 @@ export class UserManagementController {
       },
     })
     newUserRequest: NewUserRequest,
-  ): Promise<User> {
+  ): Promise<{token: string}> {
     // All new users have the "customer" role by default
     newUserRequest.roles = ['customer'];
     // ensure a valid email value and password value
@@ -98,7 +98,13 @@ export class UserManagementController {
 
     try {
       newUserRequest.resetKey = '';
-      return await this.userManagementService.createUser(newUserRequest);
+      const user = await this.userManagementService.createUser(newUserRequest);
+
+      const userProfile = this.userService.convertToUserProfile(user);
+      // create a JSON Web Token based on the user profile
+      const token = await this.jwtService.generateToken(userProfile);
+
+      return {token};
     } catch (error) {
       // MongoError 11000 duplicate key
       if (error.code === 11000 && error.errmsg.includes('index: uniqueEmail')) {
@@ -108,7 +114,39 @@ export class UserManagementController {
       }
     }
   }
+  @post('/login', {
+    responses: {
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                token: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async login(
+    @requestBody(CredentialsRequestBody) credentials: Credentials,
+  ): Promise<{token: string}> {
+    // ensure the user exists, and the password is correct
+    const user = await this.userService.verifyCredentials(credentials);
 
+    // convert a User object into a UserProfile object (reduced set of properties)
+    const userProfile = this.userService.convertToUserProfile(user);
+
+    // create a JSON Web Token based on the user profile
+    const token = await this.jwtService.generateToken(userProfile);
+
+    return {token};
+  }
   @get('/users', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -188,40 +226,6 @@ export class UserManagementController {
 
     const userId: any = currentUserProfile[securityId];
     return this.userRepository.findById(userId);
-  }
-
-  @post('/users/login', {
-    responses: {
-      '200': {
-        description: 'Token',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                token: {
-                  type: 'string',
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  })
-  async login(
-    @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
-    // ensure the user exists, and the password is correct
-    const user = await this.userService.verifyCredentials(credentials);
-
-    // convert a User object into a UserProfile object (reduced set of properties)
-    const userProfile = this.userService.convertToUserProfile(user);
-
-    // create a JSON Web Token based on the user profile
-    const token = await this.jwtService.generateToken(userProfile);
-
-    return {token};
   }
 
   @put('/users/forgot-password', {

@@ -10,12 +10,12 @@ import {
   DeepPartial,
   DefaultCrudRepository,
   HasOneRepositoryFactory,
-  repository,
-} from '@loopback/repository';
-import {User, UserCredentials} from '../models';
+  repository, HasManyRepositoryFactory} from '@loopback/repository';
+import {User, UserCredentials, Sharing} from '../models';
 import {UserCredentialsRepository} from './user-credentials.repository';
 import moment from 'moment';
 import {PostgresDataSource} from '../datasources';
+import {SharingRepository} from './sharing.repository';
 
 export type Credentials = {
   email: string;
@@ -31,12 +31,16 @@ export class UserRepository extends DefaultCrudRepository<
     typeof User.prototype.id
   >;
 
+  public readonly sharings: HasManyRepositoryFactory<Sharing, typeof User.prototype.id>;
+
   constructor(
     @inject('datasources.postgres') dataSource: PostgresDataSource,
     @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('SharingRepository') protected sharingRepositoryGetter: Getter<SharingRepository>,
   ) {
     super(User, dataSource);
+    this.sharings = this.createHasManyRepositoryFactoryFor('sharings', sharingRepositoryGetter,);
+    this.registerInclusionResolver('sharings', this.sharings.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(
       'userCredentials',
       userCredentialsRepositoryGetter,

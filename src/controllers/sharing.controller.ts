@@ -65,8 +65,16 @@ export class SharingController {
   })
   async find(
     @param.filter(Sharing) filter?: Filter<Sharing>,
-  ): Promise<Sharing[]> {
-    return this.sharingRepository.find(filter);
+  ): Promise<{data: Sharing[]; count: number}> {
+    const [data, count] = await Promise.all([
+      this.sharingRepository.find(filter),
+      this.sharingRepository.count(filter && filter.where),
+    ]);
+
+    return {
+      data: data,
+      count: count.count || 0,
+    };
   }
 
   @get('/sharings/{id}')

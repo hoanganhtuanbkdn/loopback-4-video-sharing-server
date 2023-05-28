@@ -3,8 +3,9 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {Entity, model, property, hasOne} from '@loopback/repository';
+import {Entity, model, property, hasOne, hasMany} from '@loopback/repository';
 import {UserCredentials} from './user-credentials.model';
+import {Sharing} from './sharing.model';
 
 @model({
   settings: {
@@ -88,6 +89,9 @@ export class User extends Entity {
 
   @hasOne(() => UserCredentials)
   userCredentials: UserCredentials;
+
+  @hasMany(() => Sharing)
+  sharings: Sharing[];
 
   constructor(data?: Partial<User>) {
     super(data);
