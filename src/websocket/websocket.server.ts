@@ -32,7 +32,10 @@ export class WebSocketServer extends Context {
     this.io = new Server({
       ...options,
       cors: {
-        origin: 'http://localhost:3000',
+        origin: [
+          'http://localhost:3000',
+          'https://remitano-web-gamma.vercel.app',
+        ],
       },
     });
     ctx.bind('ws.server').to(this.io);
