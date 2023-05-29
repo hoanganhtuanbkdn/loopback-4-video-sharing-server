@@ -42,6 +42,8 @@ import {PerformanceObserver} from 'perf_hooks';
 import {UserRepository} from './repositories';
 import YAML = require('yaml');
 import {UserWithPassword} from './models';
+import {WebsocketApplication} from './websocket/websocket.application';
+import {WebsocketControllerBooter} from './websocket/websocket.booter';
 
 export {ApplicationConfig};
 
@@ -65,7 +67,7 @@ perfObserver.observe({entryTypes: ['measure']});
 const pkg: PackageInfo = require('../package.json');
 
 export class LearnLoopbackApplication extends BootMixin(
-  ServiceMixin(RepositoryMixin(RestApplication)),
+  ServiceMixin(RepositoryMixin(WebsocketApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
@@ -74,6 +76,8 @@ export class LearnLoopbackApplication extends BootMixin(
     this.component(AuthenticationComponent);
     this.component(JWTAuthenticationComponent);
     this.component(AuthorizationComponent);
+
+    this.booters(WebsocketControllerBooter);
 
     this.setUpBindings();
 
@@ -99,6 +103,11 @@ export class LearnLoopbackApplication extends BootMixin(
         // Customize ControllerBooter Conventions here
         dirs: ['controllers'],
         extensions: ['.controller.js'],
+        nested: true,
+      },
+      websocketControllers: {
+        dirs: ['ws-controllers'],
+        extensions: ['.controller.ws.js'],
         nested: true,
       },
     };
