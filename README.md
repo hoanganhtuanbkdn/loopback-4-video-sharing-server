@@ -12,6 +12,12 @@ Whenever dependencies in `package.json` are changed, run the following command:
 yarn install
 ```
 
+Create a .env file based on the provided env.example file. This file will contain the environment variables required for the project.
+
+```sh
+cp env.example .env
+```
+
 ## Run the application
 
 ```sh
@@ -20,7 +26,7 @@ yarn start
 
 You can also run `node .` to skip the build step.
 
-Open http://127.0.0.1:3000 in your browser.
+Open http://127.0.0.1:5000 in your browser.
 
 ## Rebuild the project
 
@@ -66,4 +72,4 @@ yarn test
 Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
 understand how you can continue to add features to this application.
 
-[![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
+[![LoopBack](<https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png>)](http://loopback.io/)
