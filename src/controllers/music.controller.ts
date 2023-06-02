@@ -23,7 +23,7 @@ import {MusicRepository} from '../repositories';
 export class MusicController {
   constructor(
     @repository(MusicRepository)
-    public musicRepository : MusicRepository,
+    public musicRepository: MusicRepository,
   ) {}
 
   @post('/music')
@@ -47,17 +47,6 @@ export class MusicController {
     return this.musicRepository.create(music);
   }
 
-  @get('/music/count')
-  @response(200, {
-    description: 'Music model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Music) where?: Where<Music>,
-  ): Promise<Count> {
-    return this.musicRepository.count(where);
-  }
-
   @get('/music')
   @response(200, {
     description: 'Array of Music model instances',
@@ -70,29 +59,8 @@ export class MusicController {
       },
     },
   })
-  async find(
-    @param.filter(Music) filter?: Filter<Music>,
-  ): Promise<Music[]> {
+  async find(@param.filter(Music) filter?: Filter<Music>): Promise<Music[]> {
     return this.musicRepository.find(filter);
-  }
-
-  @patch('/music')
-  @response(200, {
-    description: 'Music PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Music, {partial: true}),
-        },
-      },
-    })
-    music: Music,
-    @param.where(Music) where?: Where<Music>,
-  ): Promise<Count> {
-    return this.musicRepository.updateAll(music, where);
   }
 
   @get('/music/{id}')
@@ -106,7 +74,8 @@ export class MusicController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Music, {exclude: 'where'}) filter?: FilterExcludingWhere<Music>
+    @param.filter(Music, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Music>,
   ): Promise<Music> {
     return this.musicRepository.findById(id, filter);
   }
@@ -127,17 +96,6 @@ export class MusicController {
     music: Music,
   ): Promise<void> {
     await this.musicRepository.updateById(id, music);
-  }
-
-  @put('/music/{id}')
-  @response(204, {
-    description: 'Music PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() music: Music,
-  ): Promise<void> {
-    await this.musicRepository.replaceById(id, music);
   }
 
   @del('/music/{id}')

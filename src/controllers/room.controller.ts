@@ -23,7 +23,7 @@ import {RoomRepository} from '../repositories';
 export class RoomController {
   constructor(
     @repository(RoomRepository)
-    public roomRepository : RoomRepository,
+    public roomRepository: RoomRepository,
   ) {}
 
   @post('/rooms')
@@ -47,17 +47,6 @@ export class RoomController {
     return this.roomRepository.create(room);
   }
 
-  @get('/rooms/count')
-  @response(200, {
-    description: 'Room model count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async count(
-    @param.where(Room) where?: Where<Room>,
-  ): Promise<Count> {
-    return this.roomRepository.count(where);
-  }
-
   @get('/rooms')
   @response(200, {
     description: 'Array of Room model instances',
@@ -70,29 +59,8 @@ export class RoomController {
       },
     },
   })
-  async find(
-    @param.filter(Room) filter?: Filter<Room>,
-  ): Promise<Room[]> {
+  async find(@param.filter(Room) filter?: Filter<Room>): Promise<Room[]> {
     return this.roomRepository.find(filter);
-  }
-
-  @patch('/rooms')
-  @response(200, {
-    description: 'Room PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Room, {partial: true}),
-        },
-      },
-    })
-    room: Room,
-    @param.where(Room) where?: Where<Room>,
-  ): Promise<Count> {
-    return this.roomRepository.updateAll(room, where);
   }
 
   @get('/rooms/{id}')
@@ -106,7 +74,7 @@ export class RoomController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Room, {exclude: 'where'}) filter?: FilterExcludingWhere<Room>
+    @param.filter(Room, {exclude: 'where'}) filter?: FilterExcludingWhere<Room>,
   ): Promise<Room> {
     return this.roomRepository.findById(id, filter);
   }
@@ -127,17 +95,6 @@ export class RoomController {
     room: Room,
   ): Promise<void> {
     await this.roomRepository.updateById(id, room);
-  }
-
-  @put('/rooms/{id}')
-  @response(204, {
-    description: 'Room PUT success',
-  })
-  async replaceById(
-    @param.path.number('id') id: number,
-    @requestBody() room: Room,
-  ): Promise<void> {
-    await this.roomRepository.replaceById(id, room);
   }
 
   @del('/rooms/{id}')
