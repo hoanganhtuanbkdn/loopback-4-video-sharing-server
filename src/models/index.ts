@@ -7,3 +7,6 @@ export * from './key-and-password.model';
 export * from './node-mailer.model';
 export * from './envelope.model';
 export * from './sharing.model';
+export * from './room.model';
+export * from './member.model';
+export * from './music.model';

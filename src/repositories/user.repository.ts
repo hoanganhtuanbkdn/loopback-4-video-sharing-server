@@ -11,11 +11,12 @@ import {
   DefaultCrudRepository,
   HasOneRepositoryFactory,
   repository, HasManyRepositoryFactory} from '@loopback/repository';
-import {User, UserCredentials, Sharing} from '../models';
+import {User, UserCredentials, Sharing, Room} from '../models';
 import {UserCredentialsRepository} from './user-credentials.repository';
 import moment from 'moment';
 import {PostgresDataSource} from '../datasources';
 import {SharingRepository} from './sharing.repository';
+import {RoomRepository} from './room.repository';
 
 export type Credentials = {
   email: string;
@@ -33,12 +34,16 @@ export class UserRepository extends DefaultCrudRepository<
 
   public readonly sharings: HasManyRepositoryFactory<Sharing, typeof User.prototype.id>;
 
+  public readonly rooms: HasManyRepositoryFactory<Room, typeof User.prototype.id>;
+
   constructor(
     @inject('datasources.postgres') dataSource: PostgresDataSource,
     @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('SharingRepository') protected sharingRepositoryGetter: Getter<SharingRepository>,
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('SharingRepository') protected sharingRepositoryGetter: Getter<SharingRepository>, @repository.getter('RoomRepository') protected roomRepositoryGetter: Getter<RoomRepository>,
   ) {
     super(User, dataSource);
+    this.rooms = this.createHasManyRepositoryFactoryFor('rooms', roomRepositoryGetter,);
+    this.registerInclusionResolver('rooms', this.rooms.inclusionResolver);
     this.sharings = this.createHasManyRepositoryFactoryFor('sharings', sharingRepositoryGetter,);
     this.registerInclusionResolver('sharings', this.sharings.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(

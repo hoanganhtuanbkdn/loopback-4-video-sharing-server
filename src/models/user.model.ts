@@ -6,6 +6,7 @@
 import {Entity, model, property, hasOne, hasMany} from '@loopback/repository';
 import {UserCredentials} from './user-credentials.model';
 import {Sharing} from './sharing.model';
+import {Room} from './room.model';
 
 @model({
   settings: {
@@ -92,6 +93,9 @@ export class User extends Entity {
 
   @hasMany(() => Sharing)
   sharings: Sharing[];
+
+  @hasMany(() => Room, {keyTo: 'ownerId'})
+  rooms: Room[];
 
   constructor(data?: Partial<User>) {
     super(data);

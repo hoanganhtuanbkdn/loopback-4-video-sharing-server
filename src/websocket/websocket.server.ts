@@ -27,8 +27,6 @@ export class WebSocketServer extends Context {
     private options?: ServerOptions,
   ) {
     super(ctx);
-    console.log({options});
-
     this.io = new Server({
       ...options,
       cors: {

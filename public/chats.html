@@ -70,7 +70,6 @@
     <script>
       $(function () {
         var socket = io('/chats/1');
-        console.log(socket);
         $('form').submit(function () {
           socket.emit('chat message', $('#m').val());
           $('#m').val('');
@@ -81,7 +80,6 @@
           window.scrollTo(0, document.body.scrollHeight);
         });
         socket.on('some room event', function (msg) {
-          console.log('msg', msg);
           $('#messages').append($('<li>').text(`some room event: ${msg}`));
           window.scrollTo(0, document.body.scrollHeight);
         });
