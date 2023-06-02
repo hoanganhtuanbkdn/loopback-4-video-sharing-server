@@ -6,3 +6,5 @@ export * from './music.controller';
 export * from './user-room.controller';
 export * from './room-user.controller';
 export * from './room-music.controller';
+export * from './message.controller';
+export * from './room-message.controller';

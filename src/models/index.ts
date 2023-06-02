@@ -10,3 +10,4 @@ export * from './sharing.model';
 export * from './room.model';
 export * from './member.model';
 export * from './music.model';
+export * from './message.model';

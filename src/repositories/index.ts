@@ -4,3 +4,4 @@ export * from './sharing.repository';
 export * from './member.repository';
 export * from './music.repository';
 export * from './room.repository';
+export * from './message.repository';
